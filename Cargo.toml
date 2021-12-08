@@ -1,0 +1,14 @@
+[package]
+name = "freebie-emailer"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = { version = "0.11", features = ["blocking"] }
+rss = "2.0.0"
+clap = "3.0.0-beta.5"
+lettre = "0.10.0-rc.4"
+futures = "0.3"
+clokwerk = "0.3.5"
