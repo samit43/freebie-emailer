@@ -1,4 +1,3 @@
-use clap::Parser;
 use clokwerk::{Scheduler, TimeUnits};
 use lettre::message::MessageBuilder;
 use lettre::transport::smtp::authentication::Credentials;
@@ -10,49 +9,6 @@ use std::thread;
 use std::time::Duration;
 
 const RSS_URL: &str = "https://gg.deals/au/news/feed/";
-
-#[derive(Parser)]
-#[clap(version = "0.1", author = "Samit Shaikh <shaikhsamit@live.com>")]
-struct Opts {
-    #[clap(
-        short,
-        long,
-        value_name = "ADDRESS",
-        about = "Email address to send freebies to."
-    )]
-    to: String,
-    #[clap(
-        short,
-        long,
-        value_name = "ADDRESS",
-        about = "Email address to send freebies from."
-    )]
-    from: String,
-    #[clap(short = 's', long, value_name = "URL", about = "Sets SMTP server URL.")]
-    smtp_server: String,
-    #[clap(
-        short = 'u',
-        long,
-        value_name = "USERNAME",
-        about = "Set SMTP server username."
-    )]
-    smtp_username: String,
-    #[clap(
-        short = 'p',
-        long,
-        value_name = "PASSWORD",
-        about = "Set SMTP server password."
-    )]
-    smtp_password: String,
-    #[clap(
-        short = 'm',
-        long,
-        value_name = "NUMBER",
-        about = "Maximum number of sent freebies to remember.",
-        default_value = "25"
-    )]
-    max: usize,
-}
 
 struct Sent {
     list: VecDeque<String>,
@@ -184,14 +140,20 @@ fn check(sent: Arc<Mutex<Sent>>, mailer: Arc<Mailer>) {
 }
 
 fn main() {
-    let opts = Opts::parse();
-    let sent = Arc::new(Mutex::new(Sent::new(opts.max)));
+    let smtp_server = envmnt::get_or_panic("SMTP_SERVER");
+    let smtp_username = envmnt::get_or_panic("SMTP_USERNAME");
+    let smtp_password = envmnt::get_or_panic("SMTP_PASSWORD");
+    let from = envmnt::get_or_panic("FROM");
+    let to = envmnt::get_or_panic("TO");
+    let max = envmnt::get_usize("MAX", 25);
+
+    let sent = Arc::new(Mutex::new(Sent::new(max)));
     let mailer = Arc::new(Mailer::new(
-        opts.smtp_server,
-        opts.smtp_username,
-        opts.smtp_password,
-        opts.from,
-        opts.to,
+        smtp_server,
+        smtp_username,
+        smtp_password,
+        from,
+        to,
     ));
     let task = move || {
         check(sent.clone(), mailer.clone());
