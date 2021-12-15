@@ -1,7 +1,7 @@
 FROM rust:1.57
 
 WORKDIR /usr/src/app
-COPY . .
+COPY ./app .
 
 RUN cargo install --path .
 
