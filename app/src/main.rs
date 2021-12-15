@@ -110,7 +110,7 @@ fn check(sent: Arc<Mutex<Sent>>, mailer: Arc<Mailer>) {
         Ok(channel) => {
             for item in channel.items {
                 let title = item.title().unwrap();
-                if title.contains("FREE") && !sent.lock().unwrap().contains(title.to_string()) {
+                if (title.contains("FREE") || title.contains("Prime")) && !sent.lock().unwrap().contains(title.to_string()) {
                     println!("Sending: {}", title);
                     sent.lock().unwrap().add(title.to_string());
                     let desc = parse_desc(item.description().unwrap());
