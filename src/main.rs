@@ -1,3 +1,5 @@
+extern crate openssl_probe;
+
 use clokwerk::{Scheduler, TimeUnits};
 use lettre::message::MessageBuilder;
 use lettre::transport::smtp::authentication::Credentials;
@@ -140,6 +142,9 @@ fn check(sent: Arc<Mutex<Sent>>, mailer: Arc<Mailer>) {
 }
 
 fn main() {
+    // see: https://github.com/clux/muslrust#ssl-verification
+    openssl_probe::init_ssl_cert_env_vars();
+
     let smtp_server = envmnt::get_or_panic("SMTP_SERVER");
     let smtp_username = envmnt::get_or_panic("SMTP_USERNAME");
     let smtp_password = envmnt::get_or_panic("SMTP_PASSWORD");
