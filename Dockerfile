@@ -1,5 +1,4 @@
 # Adapted from: https://kerkour.com/rust-small-docker-image/#from-scratch
-# Changed builder to use: https://github.com/emk/rust-musl-builder
 
 ####################################################################################################
 ## Builder
@@ -17,7 +16,6 @@ RUN adduser \
     --no-create-home \
     --uid "${UID}" \
     "${USER}"
-
 
 WORKDIR /freebie-emailer
 
